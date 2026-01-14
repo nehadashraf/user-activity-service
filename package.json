@@ -1,0 +1,24 @@
+{
+  "name": "user-activity-service",
+  "version": "1.0.0",
+  "description": "Event-driven user activity microservice",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "consumer": "node src/consumer.js",
+    "dev": "nodemon src/server.js",
+    "dev:consumer": "nodemon src/consumer.js"
+  },
+  "keywords": ["microservice", "kafka", "mongodb", "ddd"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "kafkajs": "^2.2.4",
+    "mongoose": "^8.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

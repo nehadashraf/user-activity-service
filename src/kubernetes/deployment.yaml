@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activity-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: activity-api
+  template:
+    metadata:
+      labels:
+        app: activity-api
+    spec:
+      containers:
+      - name: api
+        image: your-username/activity-service:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: MONGODB_URI
+          value: "mongodb://mongodb:27017/activities"
+        - name: KAFKA_BROKER
+          value: "kafka:9092"
+        - name: KAFKA_TOPIC
+          value: "user-activities"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: activity-api
+spec:
+  selector:
+    app: activity-api
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activity-consumer
+spec:
+  replicas: 3                   
+  selector:
+    matchLabels:
+      app: activity-consumer
+  template:
+    metadata:
+      labels:
+        app: activity-consumer
+    spec:
+      containers:
+      - name: consumer
+        image: your-username/activity-service:latest
+        command: ["node", "src/consumer.js"]
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://mongodb:27017/activities"
+        - name: KAFKA_BROKER
+          value: "kafka:9092"
+        - name: KAFKA_TOPIC
+          value: "user-activities"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
